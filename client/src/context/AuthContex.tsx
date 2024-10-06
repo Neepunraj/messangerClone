@@ -1,22 +1,31 @@
+import { useMutation } from "@tanstack/react-query";
 import { createContext, ReactNode, useContext } from "react";
+
+
+
+
 type AuthContext ={
 
-}
-const Context = createContext<AuthContext | null>(null)
-export function iseAuth(){
-    return useContext(Context) as AuthContext 
 }
 type AuthProviderProps={
     children : ReactNode
 }
 
+
+const Context = createContext<AuthContext | null>(null)
+
+
+export function iseAuth(){
+    return useContext(Context) as AuthContext 
+}
+
+
 export function AuthProvider ({children}:AuthProviderProps){
-    const count = 0;
-
-
+ 
+const signup = 0;
 
     <Context.Provider value={{
-        count
+        signup
     }}>
         {children}
     </Context.Provider>

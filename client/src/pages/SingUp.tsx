@@ -1,5 +1,6 @@
 import { useRef } from "react"
 import { Input } from "../components/Input"
+import { Button } from "../components/Button"
 
 
 const SingUp = () => {
@@ -19,6 +20,7 @@ const SingUp = () => {
         <Input id='name' required ref={nameRef} />
         <label htmlFor="imageUrl"> Image Url</label>
         <Input id='imageUrl' type="url" pattern="\S*" required ref={imageUrlRef} />
+        <Button type='submit' className="col-span-full">Singup</Button>
     </form>
     </>
   )
