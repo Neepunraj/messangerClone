@@ -1,11 +1,14 @@
-import { useMutation } from "@tanstack/react-query";
-import axios, { Axios } from "axios";
+import { useMutation, UseMutationResult } from "@tanstack/react-query";
+import axios, {  AxiosResponse } from "axios";
 import { createContext, ReactNode, useContext } from "react";
+import { useLocalStorage } from "../hooks/useLocalStorage";
 
 
 
 
 type AuthContext ={
+    signup:UseMutationResult<AxiosResponse,unknown,User>
+    login:UseMutationResult<{token:string,user:User}, unknown,string>
 
 }
 type AuthProviderProps={
@@ -27,9 +30,12 @@ export function iseAuth(){
 
 
 export function AuthProvider ({children}:AuthProviderProps){
+    const [user,setUser] = useLocalStorage<User>("user")
+    const signup = useMutation({mutationFn:(user:User)=>{
+        return axios.post(`${import.meta.env.VITE_SERVER_URL}`,user)
+    }})
 
 
-const signup = null;
 
     <Context.Provider value={{
        signup
