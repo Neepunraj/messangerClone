@@ -1,4 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
+import axios, { Axios } from "axios";
 import { createContext, ReactNode, useContext } from "react";
 
 
@@ -11,6 +12,11 @@ type AuthProviderProps={
     children : ReactNode
 }
 
+type User ={
+    id:string
+    name:string
+    image?:string
+}
 
 const Context = createContext<AuthContext | null>(null)
 
@@ -21,11 +27,12 @@ export function iseAuth(){
 
 
 export function AuthProvider ({children}:AuthProviderProps){
- 
-const signup = 0;
+
+
+const signup = null;
 
     <Context.Provider value={{
-        signup
+       signup
     }}>
         {children}
     </Context.Provider>
