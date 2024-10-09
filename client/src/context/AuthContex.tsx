@@ -9,6 +9,7 @@ import { useLocalStorage } from "../hooks/useLocalStorage";
 type AuthContext ={
     signup:UseMutationResult<AxiosResponse,unknown,User>
     login:UseMutationResult<{token:string,user:User}, unknown,string>
+    user?:User
 
 }
 type AuthProviderProps={
@@ -24,21 +25,23 @@ type User ={
 const Context = createContext<AuthContext | null>(null)
 
 
-export function iseAuth(){
+export function useAuth(){
     return useContext(Context) as AuthContext 
 }
 
 
 export function AuthProvider ({children}:AuthProviderProps){
-    const [user,setUser] = useLocalStorage<User>("user")
+
+    
+    const [user,setUser] = useLocalStorage<User>("user");
+
     const signup = useMutation({mutationFn:(user:User)=>{
         return axios.post(`${import.meta.env.VITE_SERVER_URL}`,user)
-    }})
-
-
+    }});
 
     <Context.Provider value={{
-       signup
+       signup,
+       user
     }}>
         {children}
     </Context.Provider>

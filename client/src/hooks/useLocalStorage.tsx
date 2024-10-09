@@ -3,15 +3,15 @@ import { useEffect, useState } from "react";
 
 
 
-export function useLocalStorage<T>(key:string,initialValue:T |(()=>T)){
+export function useLocalStorage<T>(key:string,initialValue?:T | undefined |(()=>T|undefined)){
 
 
-    const [value, setValue]= useState(()=>{
+    const [value, setValue]= useState<T | undefined>(()=>{
         const jsonValue = localStorage.getItem(key)
 
         if(jsonValue == null){
             if(typeof initialValue === 'function'){
-                return (initialValue as ()=>T)()
+                return (initialValue as ()=>T | undefined)()
             }else{
                 return initialValue
             }
@@ -22,11 +22,15 @@ export function useLocalStorage<T>(key:string,initialValue:T |(()=>T)){
 
     })
     useEffect(()=>{
+        if(value === undefined){
+            localStorage.removeItem(key)
+            return
+        }
         localStorage.setItem(key,JSON.stringify(value))
 
     },[key,value])
 
 
-    return [value,setValue] as [T,typeof setValue]
+    return [value,setValue] as [T | undefined,typeof setValue]
 
 }
