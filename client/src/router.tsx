@@ -1,9 +1,10 @@
-import { createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter, Outlet } from "react-router-dom";
 import { AuthLayout } from "./pages/layout/AuthLayout";
 import Login from "./pages/Login";
 import SingUp from "./pages/SingUp";
 import { RootLayout } from "./pages/layout/RootLayout";
 import { Home } from "./pages/Home";
+import { AuthProvider } from "./context/AuthContex";
 
 
 
@@ -35,3 +36,9 @@ export const router = createBrowserRouter([
    }
     
 ])
+
+function ContextWrapper (){
+   return <AuthProvider>
+    <Outlet />
+   </AuthProvider> 
+}
