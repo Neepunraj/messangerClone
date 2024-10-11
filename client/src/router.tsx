@@ -5,6 +5,7 @@ import SingUp from "./pages/SingUp";
 import { RootLayout } from "./pages/layout/RootLayout";
 import { Home } from "./pages/Home";
 import { AuthProvider } from "./context/AuthContex";
+import { NewChannel } from "./pages/channel/new";
 
 
 
@@ -21,7 +22,7 @@ export const router = createBrowserRouter([
                 },
             {
                 path:'/channel',
-                children:[{path:'new',element:<NewChannel/>}]
+                children:[{path:'new',element:<NewChannel />}]
             }
             ]
         },

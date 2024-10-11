@@ -6,3 +6,4 @@ export function Link({children,className,...rest}:LinkProps){
         {children}
     </RouterLink>
 }
+

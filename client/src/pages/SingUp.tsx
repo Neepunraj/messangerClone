@@ -11,16 +11,16 @@ const SingUp = () => {
     const {signup} = useAuth();
 function handlesubmit(e:FormEvent){
   e.preventDefault()
+  if(signup.isPending) return
+  const userName= userNameRef.current!.value
+  const name = nameRef.current!.value
+  const imageUrl= imageUrlRef.current!.value
+if (userName === null || userName=== "" || name === null || name === "") {
+  return
+}
 
-  const username = userNameRef.current?.value
-  const name = nameRef.current?.value
-  const imageUrl = imageUrlRef.current?.value
-  if (signup.isPending) return
-
-  if( username === null || username==='' || name == null || name === ''){
-    return 
-  }
-  signup.mutate({id:username!, name, image:imageUrl})
+  
+  signup.mutate({id:userName,name,image:imageUrl})
 }
 
 
@@ -37,8 +37,8 @@ function handlesubmit(e:FormEvent){
         <label htmlFor="name"> Name</label>
         <Input id='name' required ref={nameRef} />
         <label htmlFor="imageUrl"> Image Url</label>
-        <Input id='imageUrl' type="url" pattern="\S*" required ref={imageUrlRef} />
-        <Button type='submit' className="col-span-full">
+        <Input id='imageUrl' type="url"  ref={imageUrlRef} />
+        <Button disabled={signup.isPending} type='submit' className="col-span-full">
 
           {
             signup.isPending? "Loading" : "Sign Up"

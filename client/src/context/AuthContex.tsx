@@ -1,14 +1,17 @@
 import { useMutation, UseMutationResult } from "@tanstack/react-query";
 import axios, {  AxiosResponse } from "axios";
-import { createContext, ReactNode, useContext, useState } from "react";
+import { createContext, ReactNode, useContext, useEffect, useState } from "react";
 import { useLocalStorage } from "../hooks/useLocalStorage";
 import { useNavigate } from "react-router-dom";
-/* import {StreamChat} from 'stream-chat' */
+import {StreamChat} from 'stream-chat'
 
 type AuthContext ={
+    user?:User
+    streamChat?:StreamChat
     signup:UseMutationResult<AxiosResponse,unknown,User>
     login:UseMutationResult<{token:string,user:User}, unknown,string>
-    user?:User
+    logout: UseMutationResult<AxiosResponse,unknown,void>
+    
 
 }
 type AuthProviderProps={
@@ -27,6 +30,9 @@ const Context = createContext<AuthContext | null>(null)
 export function useAuth(){
     return useContext(Context) as AuthContext 
 }
+export function useLoggedInAuth(){
+    return useContext(Context) as AuthContext & Required<Pick<AuthContext ,"user">>
+}
 
 
 export function AuthProvider ({children}:AuthProviderProps){
@@ -34,7 +40,7 @@ export function AuthProvider ({children}:AuthProviderProps){
     
     const [user,setUser] = useLocalStorage<User>("user");
     const [token,setToken] = useLocalStorage<string>("token")
-    const [streamChat,setStramChat] = useState<string>()
+    const [streamChat,setStreamChat] = useState<StreamChat>()
     const navigate = useNavigate();
 
     const signup = useMutation({mutationFn:(user:User)=>{
@@ -54,15 +60,51 @@ const login = useMutation({
     },
     onSuccess(data){
         setUser(data.user)
+        setToken(data.token)
         
 
     }
 });
+const logout = useMutation({
+    mutationFn:()=>{
+        return axios.post(`${import.meta.env.VITE_SERVER_URL}/logout`,{token})
+    },
+    onSuccess(){
+        setUser (undefined)
+    setToken(undefined)
+    setStreamChat(undefined)
+    }
+})
 
-    <Context.Provider value={{
+useEffect(()=>{
+    if(token == null || user == null) return
+    const chat = new StreamChat(import.meta.env.VITE_STREAM_API_KEY!)
+    if(chat.tokenManager.token === token && chat.userID === user.id) return 
+
+    let isInterrupted = false;
+
+    const connectPromise = chat.connectUser(user,token).then(()=>{
+        if(isInterrupted) return 
+
+        setStreamChat(chat)
+    })
+    return ()=>{
+        isInterrupted = true;
+        setStreamChat(undefined)
+
+        connectPromise.then(()=>{
+            chat.disconnectUser()
+        })
+    }
+
+},[token,user])
+
+  return  <Context.Provider value={{
        signup,
        user,
-       login
+       login,
+       streamChat,
+       logout
     }}>
         {children}
     </Context.Provider>
